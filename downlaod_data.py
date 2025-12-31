@@ -15,7 +15,7 @@ PAIR = "EURUSD=X"
 # ===============================
 # Download data (Yahoo limit: 1H max 2y)
 # ===============================
-df = yf.download(
+forex_ml_dataset = yf.download(
     PAIR,
     interval="1h",
     period="2y",
@@ -26,41 +26,41 @@ df = yf.download(
 # ===============================
 # Safety check
 # ===============================
-if df.empty:
+if forex_ml_dataset.empty:
     raise ValueError("No data downloaded. Check Yahoo Finance limits.")
 
 # ===============================
 # Reset index
 # ===============================
-df = df.reset_index()
+forex_ml_dataset = forex_ml_dataset.reset_index()
 
 # ===============================
 # FIX: Flatten MultiIndex columns
 # ===============================
-df.columns = [
+forex_ml_dataset.columns = [
     col[0].lower() if isinstance(col, tuple) else col.lower()
-    for col in df.columns
+    for col in forex_ml_dataset.columns
 ]
 
 # ===============================
 # Rename time column
 # ===============================
-if "datetime" in df.columns:
-    df = df.rename(columns={"datetime": "time"})
-elif "date" in df.columns:
-    df = df.rename(columns={"date": "time"})
+if "datetime" in forex_ml_dataset.columns:
+    forex_ml_dataset = forex_ml_dataset.rename(columns={"datetime": "time"})
+elif "date" in forex_ml_dataset.columns:
+    forex_ml_dataset = forex_ml_dataset.rename(columns={"date": "time"})
 
 # ===============================
 # Keep only OHLCV
 # ===============================
-df = df[["time", "open", "high", "low", "close", "volume"]]
+forex_ml_dataset = forex_ml_dataset[["time", "open", "high", "low", "close", "volume"]]
 
 # ===============================
 # Save CSV
 # ===============================
-df.to_csv("data/eurusd.csv", index=False)
+forex_ml_dataset.to_csv("data/eurusd.csv", index=False)
 
 print("===================================")
-print(f"Downloaded {len(df)} rows of EURUSD")
+print(f"Downloaded {len(forex_ml_dataset)} rows of EURUSD")
 print("Saved to data/eurusd.csv")
 print("===================================")
